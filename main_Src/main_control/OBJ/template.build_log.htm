@@ -1,0 +1,64 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Administrator\Desktop\电赛代码\增加播放音乐\主控\USER\template.uvprojx
+Project File Date:  08/20/2018
+
+<h2>Output:</h2>
+Build target 'template'
+compiling SYN7318.c...
+..\SYSTEM\SYN\SYN7318.c(84): error:  #169: expected a declaration
+  }
+..\SYSTEM\SYN\SYN7318.c(115): warning:  #12-D: parsing restarts here after previous syntax error
+                                Check_USART_RX_BUF2();//检测串口二接受到从设备上传的数组数据
+..\SYSTEM\SYN\SYN7318.c(116): error:  #169: expected a declaration
+                                if(sone_munber!=SONG_NUMNER)//按键改变播放歌曲
+..\SYSTEM\SYN\SYN7318.c(130): warning:  #12-D: parsing restarts here after previous syntax error
+  Slave_adrrD_MP3_BUFF[0]=MP3_QUIT;
+..\SYSTEM\SYN\SYN7318.c(132): error:  #169: expected a declaration
+  }
+..\SYSTEM\SYN\SYN7318.c(197): warning:  #12-D: parsing restarts here after previous syntax error
+                }break;
+..\SYSTEM\SYN\SYN7318.c(198): error:  #169: expected a declaration
+                case 0x06:
+..\SYSTEM\SYN\SYN7318.c(201): warning:  #12-D: parsing restarts here after previous syntax error
+                }break;
+..\SYSTEM\SYN\SYN7318.c(203): error:  #169: expected a declaration
+        }
+..\SYSTEM\SYN\SYN7318.c(300): warning:  #12-D: parsing restarts here after previous syntax error
+                Frame[1] = 0x00;
+..\SYSTEM\SYN\SYN7318.c(301): error:  #77-D: this declaration has no storage class or type specifier
+                Frame[2] = Length + 5;
+..\SYSTEM\SYN\SYN7318.c(301): warning:  #520-D: initialization with "{...}" expected for aggregate object
+                Frame[2] = Length + 5;
+..\SYSTEM\SYN\SYN7318.c(301): error:  #20: identifier "Length" is undefined
+                Frame[2] = Length + 5;
+..\SYSTEM\SYN\SYN7318.c(302): error:  #169: expected a declaration
+                for(i = 0; i < Length; i++)
+..\SYSTEM\SYN\SYN7318.c(306): warning:  #12-D: parsing restarts here after previous syntax error
+                Clear_USART_RX_BUF3();//清除BUF3
+..\SYSTEM\SYN\SYN7318.c(307): error:  #18: expected a ")"
+          UART_Put_String(Frame, Length + 8);   
+..\SYSTEM\SYN\SYN7318.c(307): warning:  #77-D: this declaration has no storage class or type specifier
+          UART_Put_String(Frame, Length + 8);   
+..\SYSTEM\SYN\SYN7318.c(307): error:  #92: identifier-list parameters may only be used in a function definition
+          UART_Put_String(Frame, Length + 8);   
+..\SYSTEM\SYN\SYN7318.c(307): error:  #147: declaration is incompatible with "void UART_Put_String(char *, uint16_t)" (declared at line 8 of "..\SYSTEM\SYN\UART3.h")
+          UART_Put_String(Frame, Length + 8);   
+..\SYSTEM\SYN\SYN7318.c(308): error:  #169: expected a declaration
+        }
+..\SYSTEM\SYN\SYN7318.c(311): error:  #77-D: this declaration has no storage class or type specifier
+                USART_RX_BUF3_FULL=0;
+..\SYSTEM\SYN\SYN7318.c(311): error:  #147: declaration is incompatible with "u8 USART_RX_BUF3_FULL" (declared at line 46 of "..\SYSTEM\usart\usart.h")
+                USART_RX_BUF3_FULL=0;
+..\SYSTEM\SYN\SYN7318.c(312): error:  #169: expected a declaration
+        if(USART_RX_BUF3[3] == 0x41)
+..\SYSTEM\SYN\SYN7318.c(374): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+..\SYSTEM\SYN\SYN7318.c: 9 warnings, 15 errors
+"..\OBJ\template.axf" - 15 Error(s), 9 Warning(s).
+Target not created
+</pre>
+</body>
+</html>

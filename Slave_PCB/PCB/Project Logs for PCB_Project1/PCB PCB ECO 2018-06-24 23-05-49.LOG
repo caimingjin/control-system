@@ -1,0 +1,10 @@
+Removed Pin From Net: NetName=3.3V Pin=U5-1
+Removed Pin From Net: NetName=INFRARED Pin=U5-2
+Change Component Designator: OldDesignator=R7 NewDesignator=R6
+Added Component: Designator=R7(ÌùÆ¬0805-ÓÐË¿Ó¡)
+Added Pin To Net: NetName=INFRARED Pin=R7-1
+Added Pin To Net: NetName=3.3V Pin=R7-2
+Added Pin To Net: NetName=INFRARED Pin=U5-1
+Added Pin To Net: NetName=GND Pin=U5-2
+Added Member To Class: ClassName=Sheet1 Member=Component R7 100R
+Added Room: Name=Sheet1

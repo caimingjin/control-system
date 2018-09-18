@@ -1,0 +1,183 @@
+C51 COMPILER V9.52.0.0   TV                                                                08/19/2018 17:10:34 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE TV
+OBJECT MODULE PLACED IN .\Objects\TV.obj
+COMPILER INVOKED BY: D:\KEIL C51\C51\BIN\C51.EXE TV.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\TV.lst) TABS(2) OBJECT(
+                    -.\Objects\TV.obj)
+
+line level    source
+
+   1          #include "TV.h"
+   2          #include "OLED.h"
+   3          #include "IR.h"
+   4          #include "usart.h"
+   5          unsigned char TV_sta=0 ;//开关机状态
+   6          // Slave_adrr 0x43
+   7          unsigned char chnel=0;//频道
+   8          #define END_dat 0xaa
+   9          extern unsigned char BLE_RST_Flag;
+  10          extern bit BLE_RST_Flag_bit;
+  11          extern void Delay25ms();  //@12.000MHz
+  12          extern void Delay1ms(); //@12.000MHz
+  13          /*  
+  14          INFO[0] : ':' BLE固定前缀
+  15          INFO[1] : ':' BLE固定前缀
+  16          INFO[2] : 'S' 信息开始
+  17          INFO[3] : 识别号 ('B'==0x43)
+  18          INFO[4] ：开关机状态
+  19          INFO[5] ：频道
+  20          INFO[6] ：END_dat
+  21          INFO[7] ：不用
+  22          INFO[8] ：不用
+  23          INFO[9] ：不用
+  24          */
+  25          
+  26          unsigned char INFO[]={':',':','S',0x43,0x00,0x00,END_dat};
+  27          void Delay50ms()    //@12.000MHz
+  28          {
+  29   1        unsigned char i, j, k;
+  30   1      
+  31   1        _nop_();
+  32   1        _nop_();
+  33   1        i = 3;
+  34   1        j = 72;
+  35   1        k = 161;
+  36   1        do
+  37   1        {
+  38   2          do
+  39   2          {
+  40   3            while (--k);
+  41   3          } while (--j);
+  42   2        } while (--i);
+  43   1      }
+  44          void Delay10ms()    //@12.000MHz
+  45          {
+  46   1        unsigned char i, j;
+  47   1      
+  48   1        i = 117;
+  49   1        j = 184;
+  50   1        do
+  51   1        {
+  52   2          while (--j);
+  53   2        } while (--i);
+  54   1      }
+C51 COMPILER V9.52.0.0   TV                                                                08/19/2018 17:10:34 PAGE 2   
+
+  55          
+  56          void BLE_reset(void)
+  57          {
+  58   1          //Delay50ms();//保证数据至少发出一帧
+  59   1          BLE=0;  //至少拉低200us后拉高，或悬空
+  60   1          Delay10ms();
+  61   1          BLE=1;
+  62   1      }
+  63          void Send_info(void)
+  64          {
+  65   1        //Delay25ms();//
+  66   1        INFO[4]=TV_sta;
+  67   1        INFO[5]=chnel;
+  68   1        SendString_Size(INFO,7);
+  69   1        //BLE_reset();
+  70   1        BLE_RST_Flag=0;//标志开始
+  71   1        BLE_RST_Flag_bit=1;
+  72   1      }
+  73          
+  74          void open_open(void)
+  75          {
+  76   1          
+  77   1          TV_sta=0xff;
+  78   1            if(TV_sta)
+  79   1              WriteStr_8x16(0,80,"OPEN ");
+  80   1            else
+  81   1              WriteStr_8x16(0,80,"ClOSE");
+  82   1                WriteStr_8x16(1,79,"   ");
+  83   1            Timer1Init_IR();  // 定时器打开
+  84   1            IRsend_order(0x55,~0x55,0x67,~0x67,0x44,~0x44);
+  85   1              Timer1Init_main();// 定时器打开 分时复用
+  86   1            Send_info();
+  87   1      
+  88   1      }
+  89          void open_close(void)
+  90          {
+  91   1          
+  92   1          TV_sta=0x00;
+  93   1            if(TV_sta)
+  94   1              WriteStr_8x16(0,80,"OPEN ");
+  95   1            else
+  96   1              WriteStr_8x16(0,80,"ClOSE");
+  97   1              WriteStr_8x16(1,79,"   ");
+  98   1            Timer1Init_IR();  // 定时器打开
+  99   1            IRsend_order(0x55,~0x55,0x67,~0x67,0x44,~0x44);
+ 100   1              Timer1Init_main();// 定时器打开 分时复用
+ 101   1            Send_info();
+ 102   1            
+ 103   1      }
+ 104          
+ 105          void chnel_add(void)
+ 106          {
+ 107   1          if(TV_sta)
+ 108   1          {
+ 109   2            if(chnel<99)
+ 110   2              chnel++;
+ 111   2            else
+ 112   2              chnel=0;
+ 113   2          
+ 114   2            PrintNum_8x16(1,80,chnel/10);
+ 115   2            PrintNum_8x16(1,89,chnel%10);
+ 116   2            Timer1Init_IR();  // 定时器打开         
+C51 COMPILER V9.52.0.0   TV                                                                08/19/2018 17:10:34 PAGE 3   
+
+ 117   2      
+ 118   2            IRsend_order(0x55,~0x56,0x67,~0x6f,0x48,~0x48);
+ 119   2            Timer1Init_main();// 定时器打开 分时复用
+ 120   2            Send_info();
+ 121   2          
+ 122   2      }
+ 123   1      }
+ 124          
+ 125          void chnel_mul(void)
+ 126          {
+ 127   1        if(TV_sta)
+ 128   1        {
+ 129   2          if(chnel==0)
+ 130   2            chnel=0;
+ 131   2          else
+ 132   2            chnel--;
+ 133   2          PrintNum_8x16(1,80,chnel/10);
+ 134   2          PrintNum_8x16(1,89,chnel%10);
+ 135   2      
+ 136   2          Timer1Init_IR();  // 定时器打开
+ 137   2          IRsend_order(0x55,~0x55,0x67,~0x67,0x4f,~0x4f);
+ 138   2          Timer1Init_main();// 定时器打开 分时复用
+ 139   2          Send_info();
+ 140   2        
+ 141   2        }
+ 142   1      }
+ 143          
+ 144          void chnel_Change(void)
+ 145          {
+ 146   1      
+ 147   1        Timer1Init_IR();  // 定时器打开
+ 148   1        PrintNum_8x16(1,80,chnel/10);
+ 149   1        PrintNum_8x16(1,89,chnel%10);
+ 150   1        IRsend_order(0x55,~0x55,0x67,~0x67,0x4f,~0x4f);
+ 151   1          Timer1Init_main();// 定时器打开 分时复用
+ 152   1            Send_info();
+ 153   1      //      BLE_reset();
+ 154   1      }
+ 155          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    389    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      9    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

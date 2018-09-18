@@ -1,0 +1,7 @@
+TRANSFER
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Usart.obj",
+".\Objects\OLED.obj",
+".\Objects\light.obj" 
+TO ".\Objects\Slave_light.LIB"

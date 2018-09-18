@@ -1,0 +1,9 @@
+Removed Pin From Net: NetName=USART1_RX Pin=P5-1
+Removed Pin From Net: NetName=USART1_TX Pin=P5-2
+Removed Pin From Net: NetName=USART2_TX Pin=WIFI-3
+Removed Pin From Net: NetName=USART2_RX Pin=WIFI-4
+Added Pin To Net: NetName=USART2_RX Pin=P5-1
+Added Pin To Net: NetName=USART2_TX Pin=P5-2
+Added Pin To Net: NetName=USART1_TX Pin=WIFI-3
+Added Pin To Net: NetName=USART1_RX Pin=WIFI-4
+Added Room: Name=Sheet2

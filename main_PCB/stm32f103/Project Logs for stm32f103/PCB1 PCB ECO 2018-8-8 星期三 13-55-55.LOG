@@ -1,0 +1,5 @@
+Change Component Footprint: Designator=C15 Old Footprint=0805-2 New Footprint=1206
+Added Member To Class: ClassName=Sheet2 Member=Component JTAG Header 10X2
+Added Member To Class: ClassName=Sheet2 Member=Component LCD Header 16X2
+Added Member To Class: ClassName=Sheet2 Member=Component U1 STM32F103Z
+Added Room: Name=Sheet2

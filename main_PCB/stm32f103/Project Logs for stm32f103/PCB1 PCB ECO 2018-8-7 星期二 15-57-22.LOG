@@ -1,0 +1,4 @@
+Change Component Footprint: Designator=SYN1 Old Footprint=PH2.0-8P New Footprint=DIP16 - duplicate1
+Change Component Footprint: Designator=SYN2 Old Footprint=PH2.0-8P New Footprint=DIP16 - duplicate1
+Change Component Footprint: Designator=SYN Old Footprint=PH2.0-10P New Footprint=DIP20
+Added Room: Name=Sheet2

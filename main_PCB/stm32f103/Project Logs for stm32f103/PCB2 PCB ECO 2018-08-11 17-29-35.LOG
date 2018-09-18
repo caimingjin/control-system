@@ -1,0 +1,4 @@
+Added Pin To Net: NetName=VCC Pin=BLE102-13
+Added Pin To Net: NetName=VCC Pin=BLE102-14
+Added Net: Name=VCC
+Added Room: Name=Sheet2

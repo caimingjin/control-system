@@ -1,0 +1,15 @@
+Removed Pin From Net: NetName=BOOT0 Pin=P6-1
+Removed Pin From Net: NetName=BOOT1 Pin=P6-2
+Added Component: Designator=B0(0805-ÓÐË¿Ó¡)
+Added Component: Designator=B1(0805-ÓÐË¿Ó¡)
+Added Pin To Net: NetName=BOOT0 Pin=B0-2
+Added Pin To Net: NetName=BOOT1 Pin=B1-2
+Added Pin To Net: NetName=NetB0_1 Pin=B0-1
+Added Pin To Net: NetName=NetB0_1 Pin=P6-1
+Added Net: Name=NetB0_1
+Added Pin To Net: NetName=NetB1_1 Pin=B1-1
+Added Pin To Net: NetName=NetB1_1 Pin=P6-2
+Added Net: Name=NetB1_1
+Added Member To Class: ClassName=Sheet2 Member=Component B0 10K
+Added Member To Class: ClassName=Sheet2 Member=Component B1 10K
+Added Room: Name=Sheet2

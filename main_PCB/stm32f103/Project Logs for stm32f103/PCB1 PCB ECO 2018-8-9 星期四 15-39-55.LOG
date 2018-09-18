@@ -1,0 +1,15 @@
+Removed Pin From Net: NetName=3.3V Pin=R20-1
+Removed Pin From Net: NetName=3.3V Pin=R21-1
+Removed Pin From Net: NetName=3.3V Pin=R22-2
+Removed Pin From Net: NetName=SYNRB Pin=synD0-2
+Removed Pin From Net: NetName=SYNREC Pin=SYND1-2
+Removed Pin From Net: NetName=SYNWIFI Pin=SYND2-2
+Removed Member From Class: ClassName=Sheet2 Member=R20
+Removed Member From Class: ClassName=Sheet2 Member=R21
+Removed Member From Class: ClassName=Sheet2 Member=R22
+Removed Member From Class: ClassName=Sheet2 Member=synD0
+Removed Member From Class: ClassName=Sheet2 Member=SYND1
+Removed Member From Class: ClassName=Sheet2 Member=SYND2
+Change Component Footprint: Designator=X2 Old Footprint=32.768kHZ¾§Õñ-MC-306 New Footprint=CRYS-3X8
+Added Member To Class: ClassName=Sheet2 Member=Component U1 STM32F103Z
+Added Room: Name=Sheet2

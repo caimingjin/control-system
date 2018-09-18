@@ -1,0 +1,29 @@
+Added Component: Designator=rec1(DIP16 - duplicate1)
+Added Component: Designator=rec2(DIP16 - duplicate1)
+Added Pin To Net: NetName=Netrec1_1 Pin=rec1-1
+Added Pin To Net: NetName=Netrec1_1 Pin=rec2-1
+Added Net: Name=Netrec1_1
+Added Pin To Net: NetName=Netrec1_2 Pin=rec1-2
+Added Pin To Net: NetName=Netrec1_2 Pin=rec2-2
+Added Net: Name=Netrec1_2
+Added Pin To Net: NetName=Netrec1_3 Pin=rec1-3
+Added Pin To Net: NetName=Netrec1_3 Pin=rec2-3
+Added Net: Name=Netrec1_3
+Added Pin To Net: NetName=Netrec1_4 Pin=rec1-4
+Added Pin To Net: NetName=Netrec1_4 Pin=rec2-4
+Added Net: Name=Netrec1_4
+Added Pin To Net: NetName=Netrec1_5 Pin=rec1-5
+Added Pin To Net: NetName=Netrec1_5 Pin=rec2-5
+Added Net: Name=Netrec1_5
+Added Pin To Net: NetName=Netrec1_6 Pin=rec1-6
+Added Pin To Net: NetName=Netrec1_6 Pin=rec2-6
+Added Net: Name=Netrec1_6
+Added Pin To Net: NetName=Netrec1_7 Pin=rec1-7
+Added Pin To Net: NetName=Netrec1_7 Pin=rec2-7
+Added Net: Name=Netrec1_7
+Added Pin To Net: NetName=Netrec1_8 Pin=rec1-8
+Added Pin To Net: NetName=Netrec1_8 Pin=rec2-8
+Added Net: Name=Netrec1_8
+Added Member To Class: ClassName=Sheet2 Member=Component rec1 Header 8
+Added Member To Class: ClassName=Sheet2 Member=Component rec2 Header 8
+Added Room: Name=Sheet2

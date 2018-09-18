@@ -1,0 +1,10 @@
+Removed Pin From Net: NetName=5V Pin=LCD-29
+Change Component Designator: OldDesignator=3V NewDesignator=POWER2
+Change Component Designator: OldDesignator=5V NewDesignator=POWER1
+Added Component: Designator=P?(HDR1X2)
+Added Pin To Net: NetName=5V Pin=P?-2
+Added Pin To Net: NetName=LCD5_V Pin=LCD-29
+Added Pin To Net: NetName=LCD5_V Pin=P?-1
+Added Net: Name=LCD5_V
+Added Member To Class: ClassName=Sheet2 Member=Component P? Header 2
+Added Room: Name=Sheet2

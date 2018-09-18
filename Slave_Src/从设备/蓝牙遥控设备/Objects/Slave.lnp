@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Usart.obj",
+".\Objects\OLED.obj",
+".\Objects\IR.obj",
+".\Objects\kongtiao.obj" 
+TO ".\Objects\Slave" 
+PRINT(".\Listings\Slave.m51") RAMSIZE(256) 

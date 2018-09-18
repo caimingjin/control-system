@@ -1,0 +1,552 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\KEIL C51\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJ
+                    -ECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /*
+   2            晶振选择12M
+   3            文件说明：IR红外发送相关函数，硬件设计时，没有将红外口引到PCA模块口，因此只能用定时器模拟38KHZ
+   4            串口函数：Usart.c   Usart.h 
+   5            OLED显示屏函数：OLED.C OLED.H 
+   6            空调控制函数：kongtiao.c  kongtiao.h 
+   7          
+   8          */
+   9          #include "header.h"//头文件
+  10          #define MP3_START 0xff
+  11          #define MP3_QUIT  0x00
+  12          #define MP3_STOP  0xf0
+  13          #define MP3_CONTINUE  0x0f
+  14          #define MP3_NEXT  0xee
+  15          #define MP3_LAST  0xa0
+  16          //#define MP3_SONG_MAX  0x0a
+  17          unsigned char String_arr[4]={':',':','A','0'};
+  18          unsigned char MP3_Send_arr[6]={':',':','S','D','0',0xaa};
+  19          #define BLE P44
+  20          void Delay10ms(void)    //@11.0592MHz
+  21          {
+  22   1        unsigned char i, j;
+  23   1      
+  24   1        i = 108;
+  25   1        j = 145;
+  26   1        do
+  27   1        {
+  28   2          while (--j);
+  29   2        } while (--i);
+  30   1      }
+  31          void Delay1ms()   //@12.000MHz
+  32          {
+  33   1        unsigned char i, j;
+  34   1      
+  35   1        i = 12;
+  36   1        j = 169;
+  37   1        do
+  38   1        {
+  39   2          while (--j);
+  40   2        } while (--i);
+  41   1      }
+  42          
+  43          
+  44          //按键检测函数
+  45          uchar Check_key_4x4(void)
+  46          {
+  47   1        uchar temp,key_dat=0;
+  48   1        P2=0xff;
+  49   1        P27=0;
+  50   1        temp=P2;
+  51   1        temp&=0x0f;
+  52   1        if(temp!=0x0f)
+  53   1        {
+  54   2          Delay10ms();
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 2   
+
+  55   2          temp=P2;
+  56   2          temp&=0x0f;
+  57   2          if(temp!=0x0f)
+  58   2          {
+  59   3            switch(temp)
+  60   3            {
+  61   4              case 0x0e: key_dat=4;break;
+  62   4              case 0x0d: key_dat=3;break;
+  63   4              case 0x0b: key_dat=2;break;
+  64   4              case 0x07: key_dat=1;break;
+  65   4            }
+  66   3            
+  67   3          }
+  68   2          while(temp!=0x0f){temp=P2;temp&=0x0f;}
+  69   2        }
+  70   1        
+  71   1        P27=1;
+  72   1        P26=0;
+  73   1        temp=P2;
+  74   1        temp&=0x0f;
+  75   1        if(temp!=0x0f)
+  76   1        {
+  77   2          Delay10ms();
+  78   2          temp=P2;
+  79   2          temp&=0x0f;
+  80   2          if(temp!=0x0f)
+  81   2          {
+  82   3            switch(temp)
+  83   3            {
+  84   4              case 0x0e: key_dat=8;break;
+  85   4              case 0x0d: key_dat=7;break;
+  86   4              case 0x0b: key_dat=6;break;
+  87   4              case 0x07: key_dat=5;break;
+  88   4            }
+  89   3            
+  90   3          }
+  91   2          while(temp!=0x0f){temp=P2;temp&=0x0f;}
+  92   2        }
+  93   1        
+  94   1        P26=1;
+  95   1        P25=0;
+  96   1        temp=P2;
+  97   1        temp&=0x0f;
+  98   1        if(temp!=0x0f)
+  99   1        {
+ 100   2          Delay10ms();
+ 101   2          temp=P2;
+ 102   2          temp&=0x0f;
+ 103   2          if(temp!=0x0f)
+ 104   2          {
+ 105   3            switch(temp)
+ 106   3            {
+ 107   4              case 0x0e: key_dat=12;break;
+ 108   4              case 0x0d: key_dat=11;break;
+ 109   4              case 0x0b: key_dat=10;break;
+ 110   4              case 0x07: key_dat=9;break;
+ 111   4            }
+ 112   3            
+ 113   3          }
+ 114   2          while(temp!=0x0f){temp=P2;temp&=0x0f;}
+ 115   2        }
+ 116   1        
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 3   
+
+ 117   1        
+ 118   1        
+ 119   1        P25=1;
+ 120   1        P24=0;
+ 121   1        temp=P2;
+ 122   1        temp&=0x0f;
+ 123   1        if(temp!=0x0f)
+ 124   1        {
+ 125   2          Delay10ms();
+ 126   2          temp=P2;
+ 127   2          temp&=0x0f;
+ 128   2          if(temp!=0x0f)
+ 129   2          {
+ 130   3            switch(temp)
+ 131   3            {
+ 132   4              case 0x0e: key_dat=16;break;
+ 133   4              case 0x0d: key_dat=15;break;
+ 134   4              case 0x0b: key_dat=14;break;
+ 135   4              case 0x07: key_dat=13;break;
+ 136   4            }
+ 137   3            
+ 138   3          }
+ 139   2          while(temp!=0x0f){temp=P2;temp&=0x0f;}
+ 140   2        }
+ 141   1        P2=0xff;
+ 142   1        return key_dat;
+ 143   1      }
+ 144          
+ 145          
+ 146          void system_init(void)
+ 147          {
+ 148   1        P44=0;//复位按键
+ 149   1        Delay10ms();
+ 150   1        P44=1;//复位按键
+ 151   1        P15=1;
+ 152   1        P14=0;
+ 153   1        OLED_Init();
+ 154   1        Usart_init();
+ 155   1        IR_init();
+ 156   1        WriteChinese16x16(0,16,"模拟遥控");
+ 157   1      }
+ 158          
+ 159          
+ 160          /*
+ 161          按键定义：前四个代表从设备选择，1空调，二电视，三灯
+ 162          */
+ 163          
+ 164          void Delay50ms()    //@12.000MHz
+ 165          {
+ 166   1        unsigned char i, j, k;
+ 167   1      
+ 168   1        _nop_();
+ 169   1        _nop_();
+ 170   1        i = 3;
+ 171   1        j = 80;
+ 172   1        k = 161;
+ 173   1        do
+ 174   1        {
+ 175   2          do
+ 176   2          {
+ 177   3            while (--k);
+ 178   3          } while (--j);
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 4   
+
+ 179   2        } while (--i);
+ 180   1      }
+ 181          void BLE_Init(void)
+ 182          {
+ 183   1              Delay50ms();
+ 184   1              BLE=0;
+ 185   1              Delay10ms();
+ 186   1              BLE=1;
+ 187   1      }
+ 188          /*
+ 189          #define MP3_START 0xff
+ 190          #define MP3_QUIT  0x00
+ 191          #define MP3_STOP  0xf0
+ 192          #define MP3_CONTINUE  0x0f
+ 193          #define MP3_NEXT  0xee
+ 194          #define MP3_LAST  0xa0
+ 195          #define MP3_SONG_MAX  0x0a
+ 196          */
+ 197          void MP3_Send_Fun(unsigned char key_dat )
+ 198          {
+ 199   1          switch(key_dat)
+ 200   1        {
+ 201   2          case 5:
+ 202   2                MP3_Send_arr[4]=MP3_START;
+ 203   2              break;
+ 204   2          case 6:
+ 205   2                MP3_Send_arr[4]=MP3_QUIT;
+ 206   2              break;
+ 207   2          case 7:
+ 208   2                MP3_Send_arr[4]=MP3_STOP;
+ 209   2              break;
+ 210   2          case 8:
+ 211   2                MP3_Send_arr[4]=MP3_CONTINUE;
+ 212   2              break;
+ 213   2          case 9:
+ 214   2                MP3_Send_arr[4]=MP3_NEXT;
+ 215   2              break;
+ 216   2          case 10:
+ 217   2                MP3_Send_arr[4]=MP3_LAST;
+ 218   2              break;
+ 219   2          case 11:
+ 220   2                MP3_Send_arr[4]='g';
+ 221   2              break;
+ 222   2          case 12:
+ 223   2                MP3_Send_arr[4]='h';  
+ 224   2              break;
+ 225   2          case 13:      
+ 226   2                MP3_Send_arr[4]='i';
+ 227   2              break;
+ 228   2          case 14:
+ 229   2                MP3_Send_arr[4]='j';
+ 230   2              break;
+ 231   2          case 15:
+ 232   2                MP3_Send_arr[4]='k';
+ 233   2              break;
+ 234   2          case 16:
+ 235   2                MP3_Send_arr[4]='l';
+ 236   2              break;
+ 237   2      //    //////////////////////
+ 238   2      //    case 13:
+ 239   2      //          String_arr[2]='n';
+ 240   2      //        break;
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 5   
+
+ 241   2      //    case 14:    
+ 242   2      //          String_arr[2]='m';
+ 243   2      //        break;
+ 244   2      //    case 15:
+ 245   2      //        //  String_arr[2]='a';
+ 246   2      //        break;
+ 247   2      //    case 16:
+ 248   2      //        //  String_arr[2]='a';
+ 249   2      //        break;
+ 250   2        
+ 251   2        }
+ 252   1      }
+ 253          void Send_Fun(unsigned char key_dat )
+ 254          {
+ 255   1          switch(key_dat)
+ 256   1        {
+ 257   2          case 5:
+ 258   2                String_arr[3]='a';
+ 259   2              break;
+ 260   2          case 6:
+ 261   2                String_arr[3]='b';
+ 262   2              break;
+ 263   2          case 7:
+ 264   2                String_arr[3]='c';
+ 265   2      
+ 266   2              break;
+ 267   2          case 8:
+ 268   2                String_arr[3]='d';
+ 269   2              break;
+ 270   2          case 9:
+ 271   2                String_arr[3]='e';
+ 272   2              break;
+ 273   2          case 10:
+ 274   2                String_arr[3]='f';
+ 275   2              break;
+ 276   2          case 11:
+ 277   2                String_arr[3]='g';
+ 278   2              break;
+ 279   2          case 12:
+ 280   2                String_arr[3]='h';  
+ 281   2              break;
+ 282   2          case 13:      
+ 283   2                String_arr[3]='i';
+ 284   2              break;
+ 285   2          case 14:
+ 286   2                String_arr[3]='j';
+ 287   2              break;
+ 288   2          case 15:
+ 289   2                String_arr[3]='k';
+ 290   2              break;
+ 291   2          case 16:
+ 292   2                String_arr[3]='l';
+ 293   2              break;
+ 294   2      //    //////////////////////
+ 295   2      //    case 13:
+ 296   2      //          String_arr[2]='n';
+ 297   2      //        break;
+ 298   2      //    case 14:    
+ 299   2      //          String_arr[2]='m';
+ 300   2      //        break;
+ 301   2      //    case 15:
+ 302   2      //        //  String_arr[2]='a';
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 6   
+
+ 303   2      //        break;
+ 304   2      //    case 16:
+ 305   2      //        //  String_arr[2]='a';
+ 306   2      //        break;
+ 307   2        
+ 308   2        }
+ 309   1      }
+ 310          /*
+ 311          *矩阵键盘第一行前三个分别选择A,B,C设备
+ 312          *后面三行则为功能按键 既一个设备有九个功能按键
+ 313          */
+ 314          
+ 315          /*
+ 316          
+ 317          */
+ 318          void main()
+ 319          {
+ 320   1      
+ 321   1        unsigned char key_dat;
+ 322   1          system_init();
+ 323   1        
+ 324   1      //默认情况进入是空调
+ 325   1        WriteChinese16x16(2,16,"控制空调");
+ 326   1            while(1)
+ 327   1          {
+ 328   2            key_dat=Check_key_4x4();
+ 329   2            if(key_dat!=0)
+ 330   2            {
+ 331   3              if(key_dat==2)
+ 332   3              {
+ 333   4                String_arr[2]='B';
+ 334   4                String_arr[3]='0';//切换的时候清空命令
+ 335   4                WriteChinese16x16(2,16,"控制灯  ");
+ 336   4                goto B;
+ 337   4              }
+ 338   3              else if(key_dat==3)
+ 339   3              {
+ 340   4                String_arr[2]='C';
+ 341   4                String_arr[3]='0';//切换的时候清空命令
+ 342   4                WriteChinese16x16(2,16,"控制电视");
+ 343   4                goto C;
+ 344   4              }
+ 345   3              else if(key_dat==4)
+ 346   3              {
+ 347   4                String_arr[2]='D';
+ 348   4                String_arr[3]='0';//切换的时候清空命令
+ 349   4                WriteMixStrXx16(2,16," MP3       ");
+ 350   4                goto D;
+ 351   4              }
+ 352   3              else
+ 353   3              {
+ 354   4                
+ 355   4                Send_Fun(key_dat);
+ 356   4                SendString(String_arr,4);
+ 357   4                BLE_Init();
+ 358   4              }
+ 359   3            }
+ 360   2          }
+ 361   1          
+ 362   1        while(1)
+ 363   1      {
+ 364   2      
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 7   
+
+ 365   2          A:while(1)
+ 366   2          {
+ 367   3            key_dat=Check_key_4x4();
+ 368   3            if(key_dat!=0)
+ 369   3            {
+ 370   4              if(key_dat==2)
+ 371   4              {
+ 372   5                String_arr[2]='B';
+ 373   5                String_arr[3]='0';//切换的时候清空命令
+ 374   5                WriteChinese16x16(2,16,"控制灯  ");
+ 375   5                goto B;
+ 376   5              }
+ 377   4              else if(key_dat==3)
+ 378   4              {
+ 379   5                String_arr[2]='C';
+ 380   5                String_arr[3]='0';//切换的时候清空命令
+ 381   5                WriteChinese16x16(2,16,"控制电视");
+ 382   5                goto C;
+ 383   5              }
+ 384   4              else if(key_dat==4)
+ 385   4              {
+ 386   5                String_arr[2]='D';
+ 387   5                String_arr[3]='0';//切换的时候清空命令
+ 388   5                WriteMixStrXx16(2,16,"  MP3       ");
+ 389   5                goto D;
+ 390   5              }
+ 391   4              else
+ 392   4              {
+ 393   5                Send_Fun(key_dat);
+ 394   5                SendString(String_arr,4);
+ 395   5                BLE_Init();
+ 396   5              }
+ 397   4            }
+ 398   3          }
+ 399   2          
+ 400   2          B:while(1)
+ 401   2          {
+ 402   3            key_dat=Check_key_4x4();
+ 403   3            if(key_dat!=0)
+ 404   3            {
+ 405   4              if(key_dat==1)
+ 406   4              {
+ 407   5                String_arr[2]='A';
+ 408   5                String_arr[3]='0';//切换的时候清空命令
+ 409   5                WriteChinese16x16(2,16,"控制空调");
+ 410   5                goto A;
+ 411   5              }
+ 412   4              else if(key_dat==3)
+ 413   4              {
+ 414   5                String_arr[2]='C';
+ 415   5                String_arr[3]='0';//切换的时候清空命令
+ 416   5                WriteChinese16x16(2,16,"控制电视");
+ 417   5                goto C;
+ 418   5              }
+ 419   4              else if(key_dat==4)
+ 420   4              {
+ 421   5                String_arr[2]='D';
+ 422   5                String_arr[3]='0';//切换的时候清空命令
+ 423   5                WriteMixStrXx16(2,16,"  MP3       ");
+ 424   5                goto D;
+ 425   5              }
+ 426   4              else
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 8   
+
+ 427   4              {
+ 428   5                Send_Fun(key_dat);
+ 429   5                SendString(String_arr,4);
+ 430   5                BLE_Init();
+ 431   5              }
+ 432   4            }
+ 433   3          }
+ 434   2          
+ 435   2          C:while(1)
+ 436   2          {
+ 437   3            key_dat=Check_key_4x4();
+ 438   3            if(key_dat!=0)
+ 439   3            {
+ 440   4              if(key_dat==1)
+ 441   4              {
+ 442   5                String_arr[2]='A';
+ 443   5                String_arr[3]='0';//切换的时候清空命令
+ 444   5                WriteChinese16x16(2,16,"控制空调");
+ 445   5                goto A;
+ 446   5              }
+ 447   4              else if(key_dat==2)
+ 448   4              {
+ 449   5                String_arr[2]='B';
+ 450   5                String_arr[3]='0';//切换的时候清空命令
+ 451   5                WriteChinese16x16(2,16,"控制灯  ");
+ 452   5                goto B;
+ 453   5              }     
+ 454   4                else if(key_dat==4)
+ 455   4              {
+ 456   5                String_arr[2]='D';
+ 457   5                String_arr[3]='0';//切换的时候清空命令
+ 458   5                WriteMixStrXx16(2,16,"  MP3       ");
+ 459   5                goto D;
+ 460   5              }
+ 461   4              else
+ 462   4              {
+ 463   5                Send_Fun(key_dat);
+ 464   5                SendString(String_arr,4);
+ 465   5                BLE_Init();
+ 466   5              }
+ 467   4            
+ 468   4            }
+ 469   3          }
+ 470   2          
+ 471   2          
+ 472   2          
+ 473   2          D:while(1)
+ 474   2          {
+ 475   3            key_dat=Check_key_4x4();
+ 476   3            if(key_dat!=0)
+ 477   3            {
+ 478   4              if(key_dat==1)
+ 479   4              {
+ 480   5                String_arr[2]='A';
+ 481   5                String_arr[3]='0';//切换的时候清空命令
+ 482   5                WriteChinese16x16(2,16,"控制空调");
+ 483   5                goto A;
+ 484   5              }
+ 485   4              else if(key_dat==2)
+ 486   4              {
+ 487   5                String_arr[2]='B';
+ 488   5                String_arr[3]='0';//切换的时候清空命令
+C51 COMPILER V9.52.0.0   MAIN                                                              08/20/2018 16:32:48 PAGE 9   
+
+ 489   5                WriteChinese16x16(2,16,"控制灯  ");
+ 490   5                goto B;
+ 491   5              }
+ 492   4              else if(key_dat==3)
+ 493   4              {
+ 494   5                String_arr[2]='C';
+ 495   5                String_arr[3]='0';//切换的时候清空命令
+ 496   5                WriteChinese16x16(2,16,"控制电视");
+ 497   5                goto C;
+ 498   5              }
+ 499   4              else 
+ 500   4              {
+ 501   5                MP3_Send_Fun(key_dat);
+ 502   5                SendString(MP3_Send_arr,6);
+ 503   5                BLE_Init();
+ 504   5              }
+ 505   4            
+ 506   4            }
+ 507   3          }
+ 508   2            
+ 509   2      
+ 510   2      }
+ 511   1      
+ 512   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    957    ----
+   CONSTANT SIZE    =     61    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     10       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

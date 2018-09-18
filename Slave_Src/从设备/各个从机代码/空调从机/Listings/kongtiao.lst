@@ -1,0 +1,374 @@
+C51 COMPILER V9.52.0.0   KONGTIAO                                                          08/19/2018 21:56:40 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE KONGTIAO
+OBJECT MODULE PLACED IN .\Objects\kongtiao.obj
+COMPILER INVOKED BY: D:\KEIL C51\C51\BIN\C51.EXE kongtiao.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\kongtiao.lst) TAB
+                    -S(2) OBJECT(.\Objects\kongtiao.obj)
+
+line level    source
+
+   1          #include "kongtiao.h"
+   2          #include "IR.h"
+   3          #include "Usart.h"
+   4          #include "OLED.h"
+   5          #define TEMPER_ADD17  17
+   6          // Slave_adrr   0x41
+   7          #define END_dat 0xaa
+   8          unsigned char temper=0;//0-14 代表17-30 度
+   9          unsigned char model=0;//模式
+  10          unsigned char poewr=0;//模式0 关机，255 开机
+  11          //空调温度数组                          17℃                                                             3
+             -0℃
+  12          unsigned char code AIR_temper_arr[14]={0x00,0x10,0x30,0x20,0x60,0x70,0x50,0x40,0xc0,0xd0,0x90,0x80,0xa0,0x
+             -b0};
+  13          //空调模式数组       
+  14          unsigned char code AIR_Model_arr[4]={0x08,0x00,0x04,0x0c};
+  15          //                                    自动  制冷 抽湿 制热
+  16          // 发送给主机空调数据数组,S为空调识别码   温度  模式  开关机
+  17          unsigned char  send_data[6]={':',':','S',17,0,0};
+  18          extern unsigned char BLE_RST_Flag;
+  19          extern bit BLE_RST_Flag_bit;
+  20          /*        
+  21          INFO[0] : ':' BLE固定前缀
+  22          INFO[1] : ':' BLE固定前缀
+  23          INFO[2] : 'S' 信息开始
+  24          INFO[3] : 识别号 ('B'==0x42)
+  25          INFO[4] ：开关机状态
+  26          INFO[5] ：模式
+  27          INFO[6] ：温度
+  28          INFO[7] ：END_dat
+  29          INFO[8] ：不用
+  30          INFO[9] ：不用
+  31          */
+  32          unsigned char INFO[]={':',':','S',0x41,0x00,0xff,0xff,END_dat};
+  33          extern void Delay1ms();
+  34          void Delay50ms()    //@12.000MHz
+  35          {
+  36   1        unsigned char i, j, k;
+  37   1      
+  38   1        _nop_();
+  39   1        _nop_();
+  40   1        i = 3;
+  41   1        j = 85;
+  42   1        k = 161;
+  43   1        do
+  44   1        {
+  45   2          do
+  46   2          {
+  47   3            while (--k);
+  48   3          } while (--j);
+  49   2        } while (--i);
+  50   1      }
+  51          void Delay10ms()    //@12.000MHz
+  52          {
+C51 COMPILER V9.52.0.0   KONGTIAO                                                          08/19/2018 21:56:40 PAGE 2   
+
+  53   1        unsigned char i, j;
+  54   1      
+  55   1        i = 117;
+  56   1        j = 184;
+  57   1        do
+  58   1        {
+  59   2          while (--j);
+  60   2        } while (--i);
+  61   1      }
+  62          void BLE_reset(void)
+  63          {
+  64   1        //  Delay50ms();//保证数据至少发出一帧
+  65   1          BLE=0;  //至少拉低200us后拉高，或悬空
+  66   1          Delay10ms();
+  67   1          BLE=1;
+  68   1      }
+  69          //BLE向主机BLE发送信息
+  70          void Send_info(void)
+  71          {
+  72   1        //Delay25ms();//
+  73   1        INFO[4]=poewr;
+  74   1        INFO[5]=model;
+  75   1        INFO[6]=temper;
+  76   1        SendString_Size(INFO,8);
+  77   1      //  BLE_reset();
+  78   1        BLE_RST_Flag=0;//标志开始
+  79   1        BLE_RST_Flag_bit=1;
+  80   1      }
+  81          
+  82          
+  83          void Display_Init(void)
+  84          {
+  85   1          //  OLED_Init();//初始化显示
+  86   1          WriteChinese16x16(0,0,"模拟空调");
+  87   1          WriteStr_8x16(1,0," ");
+  88   1          WriteChinese16x16(1,20,"℃"); 
+  89   1          //  PrintNum_8x16(1,0,(temper+17)/10);
+  90   1          //  PrintNum_8x16(1,8,(temper+17)%10);
+  91   1          //  WriteChinese16x16(2,48,"自动");
+  92   1            WriteChinese16x16(0,0,"模式：");
+  93   1         WriteChinese16x16(2,50,"       ");
+  94   1      
+  95   1            WriteStr_8x16(0,80,"     ");
+  96   1        
+  97   1      }
+  98          void AIR_On_on(void) 
+  99          { 
+ 100   1            Timer1Init_IR();
+ 101   1            ET0=1;
+ 102   1            IRsend_order(0xb2,0x4d,0x1f,0xe0,0x08,0xf7);
+ 103   1            IRsend_order(0xb2,0x4d,0x1f,0xe0,0x08,0xf7);
+ 104   1      //      IRsend_order(0xb2,0x4d,0x1f,0xe0,0x48,0xf7);
+ 105   1      //      IRsend_order(0xb2,0x4d,0x1f,0xe0,0x48,0xf7);
+ 106   1            ET0=0;
+ 107   1            P14=0;
+ 108   1            poewr=0xff;
+ 109   1        if(poewr)
+ 110   1        {
+ 111   2              WriteStr_8x16(0,80,"OPEN ");
+ 112   2              PrintNum_8x16(1,34,(temper+TEMPER_ADD17)/10);
+ 113   2            PrintNum_8x16(1,43,(temper+TEMPER_ADD17)%10);
+ 114   2            switch(model)
+C51 COMPILER V9.52.0.0   KONGTIAO                                                          08/19/2018 21:56:40 PAGE 3   
+
+ 115   2          {
+ 116   3            case 0: WriteChinese16x16(2,52,"自动");
+ 117   3              break;
+ 118   3            case 1: WriteChinese16x16(2,52,"制冷");
+ 119   3              break;
+ 120   3            case 2: WriteChinese16x16(2,52,"抽湿");
+ 121   3              break;
+ 122   3            case 3: WriteChinese16x16(2,52,"制热");
+ 123   3              break;
+ 124   3            
+ 125   3          }
+ 126   2        }
+ 127   1        else
+ 128   1        {
+ 129   2          //OLED_Init();
+ 130   2        //  Delay10ms();
+ 131   2        WriteChinese16x16(0,0,"模拟空调");
+ 132   2        WriteStr_8x16(0,80,"CLOSE");
+ 133   2        WriteChinese16x16(1,0,"℃");  
+ 134   2        WriteStr_8x16(1,18,":");
+ 135   2        WriteChinese16x16(2,0,"模式 ：");
+ 136   2        WriteStr_8x16(2,34,":");
+ 137   2        WriteChinese16x16(1,27,"   ");  
+ 138   2        WriteChinese16x16(2,52,"  ");
+ 139   2      
+ 140   2        }
+ 141   1          Timer1Init_main();
+ 142   1          Send_info();
+ 143   1          
+ 144   1      
+ 145   1      } 
+ 146          void AIR_On_oFF(void) 
+ 147          { 
+ 148   1            Timer1Init_IR();
+ 149   1            ET0=1;
+ 150   1            IRsend_order(0xb2,0x4d,0x7b,0x84,0xe0,0x1f);
+ 151   1            IRsend_order(0xb2,0x4d,0x7b,0x84,0xe0,0x1f);
+ 152   1            ET0=0;
+ 153   1            P14=0;
+ 154   1            poewr=0x00;
+ 155   1        if(poewr)
+ 156   1        {
+ 157   2              WriteStr_8x16(0,80,"OPEN ");
+ 158   2              PrintNum_8x16(1,34,(temper+TEMPER_ADD17)/10);
+ 159   2            PrintNum_8x16(1,43,(temper+TEMPER_ADD17)%10);
+ 160   2            switch(model)
+ 161   2          {
+ 162   3            case 0: WriteChinese16x16(2,52,"自动");
+ 163   3              break;
+ 164   3            case 1: WriteChinese16x16(2,52,"制冷");
+ 165   3              break;
+ 166   3            case 2: WriteChinese16x16(2,52,"抽湿");
+ 167   3              break;
+ 168   3            case 3: WriteChinese16x16(2,52,"制热");
+ 169   3              break;
+ 170   3            
+ 171   3          }
+ 172   2        }
+ 173   1        else
+ 174   1        {
+ 175   2          //OLED_Init();
+ 176   2        //  Delay10ms();
+C51 COMPILER V9.52.0.0   KONGTIAO                                                          08/19/2018 21:56:40 PAGE 4   
+
+ 177   2        WriteChinese16x16(0,0,"模拟空调");
+ 178   2        WriteStr_8x16(0,80,"CLOSE");
+ 179   2        WriteChinese16x16(1,0,"℃");  
+ 180   2        WriteStr_8x16(1,18,":");
+ 181   2        WriteChinese16x16(2,0,"模式 ：");
+ 182   2        WriteStr_8x16(2,34,":");
+ 183   2        WriteChinese16x16(1,27,"   ");  
+ 184   2        WriteChinese16x16(2,52,"  ");
+ 185   2      
+ 186   2        }
+ 187   1          Timer1Init_main();
+ 188   1          Send_info();
+ 189   1        
+ 190   1      
+ 191   1      } 
+ 192          void AIR_temper_add(void)
+ 193          {
+ 194   1        unsigned char temp;
+ 195   1        if(poewr)
+ 196   1        {
+ 197   2            Timer1Init_IR();
+ 198   2        if(temper>=13)
+ 199   2        temper=13;
+ 200   2        else 
+ 201   2        temper=temper+1;
+ 202   2        
+ 203   2        temp=AIR_temper_arr[temper];
+ 204   2        temp|=AIR_Model_arr[model];
+ 205   2        IR_temper_change(temp);
+ 206   2          Timer1Init_main();
+ 207   2        
+ 208   2          PrintNum_8x16(1,34,(temper+TEMPER_ADD17)/10);
+ 209   2          PrintNum_8x16(1,43,(temper+TEMPER_ADD17)%10);
+ 210   2        //  WriteChinese16x16(1,20,"℃");
+ 211   2          Send_info();
+ 212   2        
+ 213   2        }
+ 214   1      } 
+ 215          
+ 216          void AIR_temper_mul(void)
+ 217          {
+ 218   1        unsigned char temp;
+ 219   1        if(poewr)
+ 220   1        {
+ 221   2          Timer1Init_IR();  // 定时器打开
+ 222   2          if(temper==0)
+ 223   2          temper=0;
+ 224   2          else
+ 225   2            temper=temper-1;
+ 226   2          temp=AIR_temper_arr[temper];//温度赋值
+ 227   2          temp|=AIR_Model_arr[model];//模式赋值
+ 228   2          IR_temper_change(temp);//红外发射
+ 229   2          Timer1Init_main();// 定时器打开 分时复用
+ 230   2          
+ 231   2          PrintNum_8x16(1,34,(temper+TEMPER_ADD17)/10);
+ 232   2          PrintNum_8x16(1,43,(temper+TEMPER_ADD17)%10);
+ 233   2            //WriteChinese16x16(1,20,"℃");
+ 234   2          
+ 235   2          Send_info();
+ 236   2        
+ 237   2          
+ 238   2        }
+C51 COMPILER V9.52.0.0   KONGTIAO                                                          08/19/2018 21:56:40 PAGE 5   
+
+ 239   1        
+ 240   1        
+ 241   1      
+ 242   1      //    else
+ 243   1      //  {
+ 244   1      //    //Display_Init();
+ 245   1      //      
+ 246   1      //  }
+ 247   1      
+ 248   1      }
+ 249          
+ 250          void AIR_temper_Set(unsigned char dat )
+ 251          {
+ 252   1        unsigned char temp;
+ 253   1        if(poewr)
+ 254   1        {
+ 255   2          Timer1Init_IR();  // 定时器打开
+ 256   2          temper=dat;
+ 257   2          temp=AIR_temper_arr[temper];//温度赋值
+ 258   2          temp|=AIR_Model_arr[model];//模式赋值
+ 259   2          
+ 260   2          IR_temper_change(temp);//红外发射
+ 261   2          Timer1Init_main();// 定时器打开 分时复用
+ 262   2          
+ 263   2          PrintNum_8x16(1,34,(temper+TEMPER_ADD17)/10);
+ 264   2          PrintNum_8x16(1,43,(temper+TEMPER_ADD17)%10);
+ 265   2            //WriteChinese16x16(1,20,"℃");
+ 266   2          
+ 267   2          Send_info();
+ 268   2      
+ 269   2          
+ 270   2        }
+ 271   1      }
+ 272          void AIR_Model(void)
+ 273          {
+ 274   1      unsigned char temp;
+ 275   1        if(poewr)
+ 276   1        {
+ 277   2          Timer1Init_IR();
+ 278   2          model=model+1;
+ 279   2          if(model>3)
+ 280   2          model=0;
+ 281   2          temp=AIR_temper_arr[temper];
+ 282   2          temp|=AIR_Model_arr[model];
+ 283   2          IR_temper_change(temp);
+ 284   2          Timer1Init_main();
+ 285   2          //WriteStr_8x16(2,0,"MODE:");
+ 286   2          switch(model)
+ 287   2          {
+ 288   3            case 0: WriteChinese16x16(2,52,"自动");
+ 289   3              break;
+ 290   3            case 1: WriteChinese16x16(2,52,"制冷");
+ 291   3              break;
+ 292   3            case 2: WriteChinese16x16(2,52,"抽湿");
+ 293   3              break;
+ 294   3            case 3: WriteChinese16x16(2,52,"制热");
+ 295   3              break;
+ 296   3            
+ 297   3          }
+ 298   2            Send_info();
+ 299   2      
+ 300   2        
+C51 COMPILER V9.52.0.0   KONGTIAO                                                          08/19/2018 21:56:40 PAGE 6   
+
+ 301   2        }
+ 302   1      //  else
+ 303   1      //  {
+ 304   1      //    //Display_Init();
+ 305   1      //      
+ 306   1      //  }   
+ 307   1      }
+ 308          
+ 309          
+ 310          void Model_Change(unsigned char temp)
+ 311          {
+ 312   1          if(poewr)
+ 313   1        {
+ 314   2          Timer1Init_IR();
+ 315   2          model=temp;
+ 316   2          temp=AIR_temper_arr[temper];
+ 317   2          temp|=AIR_Model_arr[model];
+ 318   2          IR_temper_change(temp);
+ 319   2          Timer1Init_main();
+ 320   2          //WriteStr_8x16(2,0,"MODE:");
+ 321   2          switch(model)
+ 322   2          {
+ 323   3            case 0: WriteChinese16x16(2,52,"自动");
+ 324   3              break;
+ 325   3            case 1: WriteChinese16x16(2,52,"制冷");
+ 326   3              break;
+ 327   3            case 2: WriteChinese16x16(2,52,"抽湿");
+ 328   3              break;
+ 329   3            case 3: WriteChinese16x16(2,52,"制热");
+ 330   3              break;
+ 331   3            
+ 332   3          }
+ 333   2            Send_info();
+ 334   2      
+ 335   2        
+ 336   2        }
+ 337   1      }
+ 338          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1135    ----
+   CONSTANT SIZE    =    102    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

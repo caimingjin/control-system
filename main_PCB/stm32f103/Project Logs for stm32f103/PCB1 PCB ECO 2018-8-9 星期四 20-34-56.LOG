@@ -1,0 +1,10 @@
+Added Component: Designator=slave1(HDR2X1_A)
+Added Component: Designator=slave3(HDR2X1_A)
+Added Component: Designator=slave_P(PH2.0-8P)
+Added Component: Designator=slave(HDR4X1_A)
+Added Member To Class: ClassName=Sheet2 Member=Component C12 0.1u
+Added Member To Class: ClassName=Sheet2 Member=Component slave1 Header 2
+Added Member To Class: ClassName=Sheet2 Member=Component slave3 Header 2
+Added Member To Class: ClassName=Sheet2 Member=Component slave_P Header 8
+Added Member To Class: ClassName=Sheet2 Member=Component slave Header 4
+Added Member To Class: ClassName=Sheet2 Member=Component U1 STM32F103Z

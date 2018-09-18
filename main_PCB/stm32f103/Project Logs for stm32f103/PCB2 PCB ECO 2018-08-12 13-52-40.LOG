@@ -1,0 +1,37 @@
+Change Component Designator: OldDesignator= NewDesignator=P6
+Change Component Designator: OldDesignator=3V NewDesignator=POWER2
+Change Component Designator: OldDesignator=5V NewDesignator=D3
+Change Component Designator: OldDesignator=5V NewDesignator=POWER1
+Change Component Designator: OldDesignator=D_3V NewDesignator=D2
+Change Component Designator: OldDesignator=GND NewDesignator=P8
+Change Component Designator: OldDesignator=RST NewDesignator=S1
+Change Component Designator: OldDesignator=V3.3 NewDesignator=P7
+Added Component: Designator=BR0(0805-1)
+Added Component: Designator=BR1(0805-1)
+Added Component: Designator=PB0(HDR1X2)
+Added Component: Designator=PB1(HDR1X2)
+Added Component: Designator=PBD(HDR1X2)
+Added Pin To Net: NetName=GND Pin=PB0-1
+Added Pin To Net: NetName=GND Pin=PB0-2
+Added Pin To Net: NetName=3.3V Pin=PB1-1
+Added Pin To Net: NetName=3.3V Pin=PB1-2
+Added Pin To Net: NetName=NetBR0_1 Pin=BR0-1
+Added Pin To Net: NetName=NetBR0_1 Pin=SYN2-4
+Added Net: Name=NetBR0_1
+Added Pin To Net: NetName=NetBR0_2 Pin=BR0-2
+Added Pin To Net: NetName=NetBR0_2 Pin=PBD-2
+Added Net: Name=NetBR0_2
+Added Pin To Net: NetName=NetBR1_1 Pin=BR1-1
+Added Pin To Net: NetName=NetBR1_1 Pin=SYN2-3
+Added Net: Name=NetBR1_1
+Added Pin To Net: NetName=NetBR1_2 Pin=BR1-2
+Added Pin To Net: NetName=NetBR1_2 Pin=PBD-1
+Added Net: Name=NetBR1_2
+Added Member To Class: ClassName=Sheet2 Member=Component BR0 1k
+Added Member To Class: ClassName=Sheet2 Member=Component BR1 1k
+Added Member To Class: ClassName=Sheet2 Member=Component D3 
+Added Member To Class: ClassName=Sheet2 Member=Component P6 Header 2
+Added Member To Class: ClassName=Sheet2 Member=Component PB0 Header 2
+Added Member To Class: ClassName=Sheet2 Member=Component PB1 Header 2
+Added Member To Class: ClassName=Sheet2 Member=Component PBD Header 2
+Added Room: Name=Sheet2

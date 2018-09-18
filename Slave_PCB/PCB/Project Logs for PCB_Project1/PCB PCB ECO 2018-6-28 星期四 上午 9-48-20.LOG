@@ -1,0 +1,11 @@
+Added Component: Designator=P_key(HDR1X8)
+Added Pin To Net: NetName=P0_0 Pin=P_key-1
+Added Pin To Net: NetName=P0_1 Pin=P_key-2
+Added Pin To Net: NetName=P0_2 Pin=P_key-3
+Added Pin To Net: NetName=P0_3 Pin=P_key-4
+Added Pin To Net: NetName=P0_4 Pin=P_key-5
+Added Pin To Net: NetName=P0_5 Pin=P_key-6
+Added Pin To Net: NetName=P0_6 Pin=P_key-7
+Added Pin To Net: NetName=P0_7 Pin=P_key-8
+Added Member To Class: ClassName=Sheet1 Member=Component P_key Header 8
+Added Room: Name=Sheet1

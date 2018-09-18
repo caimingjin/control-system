@@ -1,0 +1,8 @@
+Removed Pin From Net: NetName=NRESET Pin=U1-47
+Added Component: Designator=RRST(0805-1)
+Added Pin To Net: NetName=NRESET Pin=RRST-1
+Added Pin To Net: NetName=NetRRST_2 Pin=RRST-2
+Added Pin To Net: NetName=NetRRST_2 Pin=U1-47
+Added Net: Name=NetRRST_2
+Added Member To Class: ClassName=Sheet2 Member=Component RRST 4.7k
+Added Room: Name=Sheet2

@@ -1,0 +1,4 @@
+Removed Pin From Net: NetName=OSC32_OUT Pin=X3-1
+Removed Pin From Net: NetName=OSC32_IN Pin=X3-2
+Removed Member From Class: ClassName=Sheet2 Member=X3
+Added Room: Name=Sheet2

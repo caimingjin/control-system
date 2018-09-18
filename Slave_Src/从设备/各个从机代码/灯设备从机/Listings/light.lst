@@ -1,0 +1,212 @@
+C51 COMPILER V9.52.0.0   LIGHT                                                             08/19/2018 17:18:13 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE LIGHT
+OBJECT MODULE PLACED IN .\Objects\light.obj
+COMPILER INVOKED BY: D:\KEIL C51\C51\BIN\C51.EXE light.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\light.lst) TABS(2) O
+                    -BJECT(.\Objects\light.obj)
+
+line level    source
+
+   1          #include "light.h"
+   2          extern void Delay25ms();
+   3          extern void Delay1ms();
+   4          unsigned char Light_sta=0x00; //默认灯关闭
+   5          unsigned char Light_ON_off=0x00;
+   6          unsigned char code Light_data[]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};
+   7          extern unsigned char BLE_RST_Flag;
+   8          extern bit BLE_RST_Flag_bit;
+   9          // Slave_adrr   0x42
+  10          #define END_dat 0xaa
+  11          /*  
+  12          INFO[0] : ':' BLE固定前缀
+  13          INFO[1] : ':' BLE固定前缀
+  14          INFO[2] : 'S' 信息开始
+  15          INFO[3] : 识别号 ('B'==0x42)
+  16          INFO[4] ：开关机状态
+  17          INFO[5] ：亮灯数量
+  18          INFO[6] ：END_dat
+  19          INFO[7] ：不用
+  20          INFO[8] ：不用
+  21          INFO[9] ：不用
+  22          */
+  23          
+  24          unsigned char INFO[]={':',':','S',0x42,0x00,0x00,END_dat};
+  25          void Delay50ms()    //@12.000MHz
+  26          {
+  27   1        unsigned char i, j, k;
+  28   1      
+  29   1        _nop_();
+  30   1        _nop_();
+  31   1        i = 3;
+  32   1        j = 75;
+  33   1        k = 161;
+  34   1        do
+  35   1        {
+  36   2          do
+  37   2          {
+  38   3            while (--k);
+  39   3          } while (--j);
+  40   2        } while (--i);
+  41   1      }
+  42          
+  43          void Delay10ms()    //@12.000MHz
+  44          {
+  45   1        unsigned char i, j;
+  46   1      
+  47   1        i = 117;
+  48   1        j = 184;
+  49   1        do
+  50   1        {
+  51   2          while (--j);
+  52   2        } while (--i);
+  53   1      }
+  54          
+C51 COMPILER V9.52.0.0   LIGHT                                                             08/19/2018 17:18:13 PAGE 2   
+
+  55          
+  56          //计算灯亮的个数
+  57          unsigned char Count_Light_Num(void)
+  58          {
+  59   1        unsigned char temp;
+  60   1        unsigned char i,Light_Num=0;
+  61   1        temp=Light_sta;
+  62   1          for(i=0;i<8;i++)
+  63   1        {
+  64   2          if(temp & 0x01 ==0x01)
+  65   2            ;   
+  66   2          else  
+  67   2            Light_Num++;
+  68   2          temp>>=1;
+  69   2        }
+  70   1        return Light_Num;
+  71   1      }
+  72          void BLE_reset(void)
+  73          {
+  74   1          //Delay50ms();//保证数据至少发出一帧
+  75   1          BLE=0;  //至少拉低200us后拉高，或悬空
+  76   1          Delay10ms();
+  77   1          BLE=1;
+  78   1      }
+  79          void Send_info(void)
+  80          {
+  81   1        //Delay25ms();//保证数据至少发出一帧
+  82   1        INFO[4]=Light_ON_off;
+  83   1        INFO[5]=Count_Light_Num();
+  84   1        PrintNum_8x16(1,73,INFO[5]);
+  85   1        SendString_Size(INFO,7);
+  86   1        //蓝牙复位前需要延时
+  87   1        BLE_RST_Flag=0;//标志开始
+  88   1        BLE_RST_Flag_bit=1;
+  89   1      //  BLE_reset();
+  90   1      }
+  91          
+  92          void Light_Off(void)
+  93          {
+  94   1        P2=0xff;
+  95   1        Light_sta=0xff;
+  96   1        Light_ON_off=0x00;
+  97   1        Send_info();
+  98   1      
+  99   1      }
+ 100          
+ 101          void Light_ON(void)
+ 102          {
+ 103   1        if(Light_ON_off==0)
+ 104   1        {
+ 105   2            P2=0xfe;
+ 106   2            Light_sta=0xfe;
+ 107   2            Light_ON_off=0xff;
+ 108   2            
+ 109   2        }
+ 110   1          Send_info();
+ 111   1        
+ 112   1      
+ 113   1      }
+ 114          void Light_More(void)
+ 115          {
+ 116   1        //if(Light_sta!=0x80)
+C51 COMPILER V9.52.0.0   LIGHT                                                             08/19/2018 17:18:13 PAGE 3   
+
+ 117   1        if(Light_ON_off)
+ 118   1        {
+ 119   2            Light_sta<<=1;
+ 120   2            P2=Light_sta;
+ 121   2            
+ 122   2            Send_info();
+ 123   2          
+ 124   2        }
+ 125   1      
+ 126   1      }
+ 127          
+ 128          void Light_Less(void)
+ 129          {
+ 130   1        if(Light_ON_off)
+ 131   1        {
+ 132   2            if(Light_sta==0x00)
+ 133   2            {
+ 134   3              Light_sta=0x80;
+ 135   3            }
+ 136   2      
+ 137   2            else
+ 138   2            {
+ 139   3                  Light_sta>>=1;
+ 140   3                  Light_sta|=0x80;
+ 141   3                  P2=Light_sta;
+ 142   3            }
+ 143   2            
+ 144   2          Send_info();
+ 145   2      
+ 146   2        }
+ 147   1      
+ 148   1      }
+ 149          
+ 150          
+ 151          void Light_Change(unsigned char temp)
+ 152          {
+ 153   1        //if(Light_sta!=0x80)
+ 154   1      //  if(Light_ON_off)
+ 155   1      //  {
+ 156   1      //      Light_sta<<=1;
+ 157   1      //      P2=Light_sta;
+ 158   1      //      
+ 159   1      //  }
+ 160   1        if(Light_ON_off)
+ 161   1        {
+ 162   2        switch(temp)
+ 163   2        {
+ 164   3          case 3:
+ 165   3            Light_sta=0x00;
+ 166   3            break;
+ 167   3          case 2:
+ 168   3            Light_sta=0xf0;
+ 169   3            break;
+ 170   3          case 1:
+ 171   3            Light_sta=0xfe;
+ 172   3            break;
+ 173   3          
+ 174   3        }
+ 175   2          P2=Light_sta;
+ 176   2          Send_info();
+ 177   2        
+ 178   2      }
+C51 COMPILER V9.52.0.0   LIGHT                                                             08/19/2018 17:18:13 PAGE 4   
+
+ 179   1        
+ 180   1      
+ 181   1      }
+ 182          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    192    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      9    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

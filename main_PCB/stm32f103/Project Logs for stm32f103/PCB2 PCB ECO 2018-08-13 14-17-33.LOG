@@ -1,0 +1,8 @@
+Removed Pin From Net: NetName=GND Pin=LCD-30
+Change Component Designator: OldDesignator=PLCD NewDesignator=P?
+Added Component: Designator=LCD-G(HDR1X2)
+Added Pin To Net: NetName=LCDG Pin=LCD-30
+Added Pin To Net: NetName=LCDG Pin=LCD-G-1
+Added Net: Name=LCDG
+Added Member To Class: ClassName=Sheet2 Member=Component LCD-G Header 2
+Added Room: Name=Sheet2

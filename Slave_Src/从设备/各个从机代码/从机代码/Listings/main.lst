@@ -1,0 +1,148 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              07/06/2018 18:25:13 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\KEIL C51\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJ
+                    -ECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "stc15.h"
+   2          #include "usart.h"
+   3          #include "OLED.h"
+   4          #define Slave_adrr 0x41 //从设备识别地址A 0x41  B 0x42  C 0x43 D 0x44
+   5          
+   6          /*********************************************************************
+   7          【函 数 名】：UART1_Get_char----串口1接收一个字节函数
+   8          【参数说明】；无参
+   9          【返 回 值】：接收到的字节
+  10          【简    例】：uchar d;
+  11                        d = UART1_Get_char();
+  12                        UART1_Put_Char(d); -----输出接收到的字节
+  13          *********************************************************************/
+  14          unsigned char UART1_Get_char() 
+  15          {
+  16   1        while(RI == 0);  //RI = 1;接收结束
+  17   1        RI = 0;
+  18   1        return(SBUF); 
+  19   1      }
+  20          /*********************************************************************
+  21          【函 数 名】：UART1_Get_String----串口1接收字符串函数
+  22          【参数说明】；Pst：存放接收到的字符串的数组名
+  23                        Length：字符串长度
+  24          【简    例】：uchar d[4] = {0};
+  25                        UART1_Get_String(d,4);
+  26                        UART1_Put_String(d,4);----输出接收到的字符串 
+  27          *********************************************************************/
+  28          void UART1_Get_String(unsigned char *Pst,unsigned char Length)
+  29          {
+  30   1        unsigned char i;
+  31   1        for(i=0;i<Length;i++)
+  32   1        {
+  33   2           Pst[i] = UART1_Get_char();
+  34   2        }
+  35   1      }
+  36          /*
+  37          * ChanmelFunction：频道和功能数据
+  38          *最大255 足够用
+  39          */
+  40          //unsigned char  ChanmelFunction;
+  41          
+  42          /*
+  43          * BLEReceive：蓝牙接受数据
+  44          *前八位地址识别，后八位数据位
+  45          */
+  46          void Delay100ms()   //@11.0592MHz
+  47          {
+  48   1        unsigned char i, j, k;
+  49   1      
+  50   1        _nop_();
+  51   1        _nop_();
+  52   1        i = 1;
+  53   1        j = 52;
+  54   1        k = 195;
+C51 COMPILER V9.52.0.0   MAIN                                                              07/06/2018 18:25:13 PAGE 2   
+
+  55   1        do
+  56   1        {
+  57   2          do
+  58   2          {
+  59   3            while (--k);
+  60   3          } while (--j);
+  61   2        } while (--i);
+  62   1      }
+  63          
+  64          unsigned char  BLEReceive[2];
+  65          void system_init(void)
+  66          {
+  67   1        P44=0;//复位按键
+  68   1        Delay100ms();
+  69   1        P44=1;//复位按键
+  70   1        P15=1;
+  71   1        P14=0;
+  72   1        OLED_Init();
+  73   1        Usart_init();
+  74   1        WriteChinese16x16(0,32,"模拟电视");
+  75   1      }
+  76          
+  77          void main()
+  78          {
+  79   1        system_init();
+  80   1        while(1)
+  81   1        {
+  82   2          if(BLEReceive[0]==Slave_adrr)//判断接收到数据前八位是否为从机地址
+  83   2          {
+  84   3            BLEReceive[0]=0x00;//清除
+  85   3            switch(BLEReceive[1])//判断后八位对应功能
+  86   3            {
+  87   4              case 'a':
+  88   4                //SendString("::a");
+  89   4                WriteStr_8x16(3,20,"a");
+  90   4                break;
+  91   4              case 'b':
+  92   4              //  SendString("::b");
+  93   4                WriteStr_8x16(3,20,"b");
+  94   4                break;
+  95   4              case 'c':
+  96   4                //SendString("::c");
+  97   4                WriteStr_8x16(3,20,"c");
+  98   4                break;
+  99   4              case 'd':
+ 100   4                //SendString("::d");
+ 101   4                WriteStr_8x16(3,20,"d");
+ 102   4                break;
+ 103   4              case 'e':
+ 104   4              //  SendString("::e");
+ 105   4                WriteStr_8x16(3,20,"e");
+ 106   4                break;
+ 107   4              case 'f':
+ 108   4              //  SendString("::f");
+ 109   4                WriteStr_8x16(3,20,"f");
+ 110   4                break;  
+ 111   4              default:
+ 112   4                //SendString("::0");
+ 113   4                WriteStr_8x16(3,20,"0");
+ 114   4                
+ 115   4            }
+ 116   3            BLEReceive[1]=0x00;
+C51 COMPILER V9.52.0.0   MAIN                                                              07/06/2018 18:25:13 PAGE 3   
+
+ 117   3          }
+ 118   2          Delay100ms();
+ 119   2        }
+ 120   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    190    ----
+   CONSTANT SIZE    =     23    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

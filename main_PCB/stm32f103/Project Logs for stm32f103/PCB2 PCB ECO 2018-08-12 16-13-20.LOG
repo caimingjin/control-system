@@ -1,0 +1,4 @@
+Added Pin To Net: NetName=KEY1 Pin=R24-1
+Added Pin To Net: NetName=KEY1 Pin=U1-4
+Added Net: Name=KEY1
+Added Room: Name=Sheet2

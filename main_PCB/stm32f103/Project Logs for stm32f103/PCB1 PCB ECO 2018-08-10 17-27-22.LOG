@@ -1,0 +1,4 @@
+Change Component Footprint: Designator=U1 Old Footprint=TQFP144_N New Footprint=STM32f103zet6
+Added Pin To Net: NetName=GND Pin=C11-1
+Added Pin To Net: NetName=GND Pin=R12-1
+Added Room: Name=Sheet2

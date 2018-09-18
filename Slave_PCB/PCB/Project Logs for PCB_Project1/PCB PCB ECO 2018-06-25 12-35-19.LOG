@@ -1,0 +1,13 @@
+Removed Pin From Net: NetName=WAKE Pin=U2-38
+Change Component Footprint: Designator=C1 Old Footprint=1206 New Footprint=0805-2
+Change Component Footprint: Designator=C3 Old Footprint=1206 New Footprint=0805-2
+Change Component Footprint: Designator=C5 Old Footprint=1206 New Footprint=0805-2
+Change Component Footprint: Designator=C6 Old Footprint=1206 New Footprint=0805-2
+Added Component: Designator=R8(ÌùÆ¬0805-ÓÐË¿Ó¡)
+Added Pin To Net: NetName=WAKE Pin=R8-1
+Added Pin To Net: NetName=NetR8_2 Pin=R8-2
+Added Pin To Net: NetName=NetR8_2 Pin=U2-38
+Added Net: Name=NetR8_2
+Added Member To Class: ClassName=Sheet1 Member=Component R8 0R
+Added Member To Class: ClassName=Sheet1 Member=Component U2 WH-BLE102-V1.1
+Added Room: Name=Sheet1

@@ -1,0 +1,4 @@
+Added Pin To Net: NetName=RECR Pin=SYN2-7
+Added Pin To Net: NetName=RECR Pin=U1-42
+Added Net: Name=RECR
+Added Room: Name=Sheet2

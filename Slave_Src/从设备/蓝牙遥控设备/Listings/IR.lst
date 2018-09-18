@@ -1,0 +1,256 @@
+C51 COMPILER V9.52.0.0   IR                                                                08/05/2018 19:11:21 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE IR
+OBJECT MODULE PLACED IN .\Objects\IR.obj
+COMPILER INVOKED BY: D:\KEIL C51\C51\BIN\C51.EXE IR.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\IR.lst) TABS(2) OBJECT(
+                    -.\Objects\IR.obj)
+
+line level    source
+
+   1          #include "IR.h"
+   2           
+   3          sbit IR = P1^4;     // 红外发射 led 
+   4          
+   5          
+   6          void send0() 
+   7          { 
+   8   1        TR0 = 1;  
+   9   1        ET0=1;
+  10   1        TH1 = (65536-570)/256; 
+  11   1        TL1 = (65536-570)%256; 
+  12   1        TR1 = 1; 
+  13   1        while(!TF1); 
+  14   1        TF1 = 0; 
+  15   1        TR1 = 0; 
+  16   1        ET0=0;
+  17   1        TR0 = 0; 
+  18   1        IR = 1; 
+  19   1        TH1 = (65536-570)/256; 
+  20   1        TL1 = (65536-570)%256; 
+  21   1        TR1 = 1; 
+  22   1        while(!TF1); 
+  23   1        TF1 = 0; 
+  24   1        TR1 = 0; 
+  25   1        IR = 1; 
+  26   1      
+  27   1      } 
+  28          void send1() 
+  29          { 
+  30   1        TR0 = 1;   // 打开红外发射定时器 0  ，发射 38khz 红外
+  31   1        ET0=1;
+  32   1        //IR = 0;
+  33   1        TH1 = (65536-570)/256; 
+  34   1        TL1 = (65536-570)%256;  // 定时器 T1定时 1650us 
+  35   1        TR1 = 1;   // 打开定时器 1 
+  36   1        while(!TF1);   // 定时结束后
+  37   1        TF1 = 0;   // 重置标志位
+  38   1        TR1 = 0;   // 关闭定时器 1 
+  39   1        TR0 = 0; 
+  40   1          ET0=0;
+  41   1        IR = 1; 
+  42   1        TH1 = (65536-1670)/256; 
+  43   1        TL1 = (65536-1670)%256; 
+  44   1        TR1 = 1; 
+  45   1        while(!TF1); 
+  46   1        TF1 = 0; 
+  47   1        TR1 = 0; 
+  48   1        IR = 1; 
+  49   1      } 
+  50          void IRsend_byte(uchar num) 
+  51          { 
+  52   1        uchar i; 
+  53   1        for(i=0;i<8;i++) 
+  54   1        { 
+C51 COMPILER V9.52.0.0   IR                                                                08/05/2018 19:11:21 PAGE 2   
+
+  55   2          if(num&0x80) 
+  56   2            send1(); 
+  57   2          else 
+  58   2            send0(); 
+  59   2          
+  60   2            num<<=1; 
+  61   2        } 
+  62   1      } 
+  63          /*
+  64          
+  65          */
+  66          void IRstart() 
+  67          { 
+  68   1        TR0 = 1; //打开定时器0
+  69   1          ET0=1;
+  70   1        //IR = 0;
+  71   1        TH1 = (65536-4550)/256; 
+  72   1        TL1 = (65536-4550)%256; 
+  73   1        TR1 = 1; //打开定时器1 计时
+  74   1        while(!TF1); 
+  75   1        TF1 = 0; 
+  76   1        TR1 = 0; 
+  77   1        TR0 = 0;
+  78   1        ET0=0;  
+  79   1        IR = 1; 
+  80   1        TH1 = (65536-4550)/256; 
+  81   1        TL1 = (65536-4550)%256; 
+  82   1        TR1 = 1; 
+  83   1        while(!TF1); 
+  84   1        TF1 = 0; 
+  85   1        TR1 = 0; 
+  86   1        IR = 1; 
+  87   1      } 
+  88          
+  89          void Middle(unsigned int L, H) 
+  90          { 
+*** WARNING C235 IN LINE 90 OF IR.c: parameter 2: different types
+  91   1        TR0 = 1;  
+  92   1      //  IR = 0;
+  93   1        TH1 = (65536-L)/256; 
+  94   1        TL1 = (65536-L)%256; 
+  95   1        TR1 = 1; 
+  96   1        while(!TF1); 
+  97   1        TF1 = 0; 
+  98   1        TR1 = 0; 
+  99   1        TR0 = 0; 
+ 100   1        ET0=0;
+ 101   1        IR = 1; 
+ 102   1        TH1 = (65536-H)/256; 
+ 103   1        TL1 = (65536-H)%256; 
+ 104   1        TR1 = 1; 
+ 105   1        while(!TF1); 
+ 106   1        TF1 = 0; 
+ 107   1        TR1 = 0; 
+ 108   1      } 
+ 109          void IRstop() 
+ 110          { 
+ 111   1        TR0 = 1; 
+ 112   1        ET0=1;
+ 113   1        //IR = 0; 
+ 114   1        TH1 = (65536-580)/256; 
+ 115   1        TL1 = (65536-580)%256; 
+C51 COMPILER V9.52.0.0   IR                                                                08/05/2018 19:11:21 PAGE 3   
+
+ 116   1        TR1 = 1; 
+ 117   1        while(!TF1); 
+ 118   1        TF1 = 0; 
+ 119   1        TR1 = 0; 
+ 120   1        TR0 = 0; 
+ 121   1        IR = 1; 
+ 122   1        TH1 = (65536-5100)/256; 
+ 123   1        TL1 = (65536-5100)%256; 
+ 124   1        TR1 = 1; 
+ 125   1        while(!TF1); 
+ 126   1        TF1 = 0; 
+ 127   1        TR1 = 0; 
+ 128   1        IR = 0; 
+ 129   1      
+ 130   1      } 
+ 131          
+ 132          
+ 133          //void timer_init() 
+ 134          //{ 
+ 135          //  TMOD = 0x12; 
+ 136          //  TH0  = 0xf6; 
+ 137          //  TL0  = 0xf6; 
+ 138          //  EA   = 1; 
+ 139          //  ET0  = 1; 
+ 140          //} 
+ 141          
+ 142          //用来计数
+ 143          void Timer1Init(void)   //0微秒@12.000MHz
+ 144          {
+ 145   1        AUXR &= 0xBF;   //定时器时钟12T模式
+ 146   1        TMOD &= 0x0F;   //设置定时器模式
+ 147   1        TL1 = 0;    //设置定时初值
+ 148   1        TH1 = 0;    //设置定时初值
+ 149   1        TF1 = 0;    //清除TF1标志
+ 150   1        TR1 = 0;    //定时器1开始计时
+ 151   1      }
+ 152          
+ 153          
+ 154          //定时中断，38K Hz
+ 155          void Timer0Init(void)   //13微秒@12.000MHz
+ 156          {
+ 157   1        AUXR &= 0x7F;   //定时器时钟12T模式
+ 158   1        TMOD &= 0xF0;   //设置定时器模式
+ 159   1        TL0 = 0xF3;   //设置定时初值
+ 160   1        TH0 = 0xFF;   //设置定时初值
+ 161   1        TF0 = 0;    //清除TF0标志
+ 162   1        TR0 = 0;    //定时器0开始计时
+ 163   1        EA=1;
+ 164   1        ET0=1;
+ 165   1      }
+ 166          
+ 167          
+ 168          
+ 169          /*
+ 170          
+ 171          */
+ 172          void IRsend_order(uchar a,uchar b,uchar c,uchar d,uchar e,uchar f) 
+ 173          { 
+ 174   1      IRstart(); 
+ 175   1        IRsend_byte(a); 
+ 176   1        IRsend_byte(b); 
+ 177   1        IRsend_byte(c); 
+C51 COMPILER V9.52.0.0   IR                                                                08/05/2018 19:11:21 PAGE 4   
+
+ 178   1        IRsend_byte(d); 
+ 179   1        IRsend_byte(e); 
+ 180   1        IRsend_byte(f); 
+ 181   1        IRstop(); 
+ 182   1      } 
+ 183          //void IRsend_order_no_S(uchar a,b,c,d,e,f) 
+ 184          //{ 
+ 185          //  IRsend_byte(a); 
+ 186          //  IRsend_byte(b); 
+ 187          //  IRsend_byte(c); 
+ 188          //  IRsend_byte(d); 
+ 189          //  IRsend_byte(e); 
+ 190          //  IRsend_byte(f); 
+ 191          //  IRstop(); 
+ 192          //} 
+ 193          
+ 194          /*
+ 195          红外初始化函数
+ 196          */
+ 197           void  IR_init(void)
+ 198          {
+ 199   1        Timer1Init();
+ 200   1        Timer0Init();
+ 201   1      }
+ 202          
+ 203          //开机关机数据
+ 204          void IR_On_oFF() 
+ 205          { 
+ 206   1            ET0=1;
+ 207   1            IRsend_order(0xb2,0x4d,0x1f,0xe0,0x48,0xb7);
+ 208   1            IRsend_order(0xb2,0x4d,0x1f,0xe0,0x48,0xb7);
+ 209   1            ET0=0;
+ 210   1            P14=0;
+ 211   1      } 
+ 212          
+ 213          //红外发送改变温度，模式数据
+ 214          void IR_temper_change(unsigned char dat) 
+ 215          { 
+ 216   1            ET0=1;
+ 217   1            IRsend_order(0xb2,0x4d,0x1f,0xe0,dat,~dat);
+ 218   1            IRsend_order(0xb2,0x4d,0x1f,0xe0,dat,~dat);
+ 219   1            ET0=0;
+ 220   1            P14=0;
+ 221   1      }
+ 222          void timer0()interrupt 1 
+ 223          { 
+ 224   1        IR = ~IR; 
+ 225   1      } 
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    534    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      10
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

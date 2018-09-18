@@ -1,0 +1,33 @@
+Change Component Footprint: Designator=R1 Old Footprint=0603-1 New Footprint=0805-1
+Change Component Footprint: Designator=R20 Old Footprint=0603-1 New Footprint=0805-1
+Change Component Footprint: Designator=R21 Old Footprint=0603-1 New Footprint=0805-1
+Change Component Footprint: Designator=R22 Old Footprint=0603-1 New Footprint=0805-1
+Change Component Footprint: Designator=R23 Old Footprint=0603-1 New Footprint=0805-1
+Change Component Footprint: Designator=R24 Old Footprint=0603-1 New Footprint=0805-1
+Change Component Footprint: Designator=C5 Old Footprint=C-RAD-0603 New Footprint=0805-2
+Change Component Footprint: Designator=C13 Old Footprint=C-RAD-0603 New Footprint=0805-2
+Change Component Footprint: Designator=C15 Old Footprint=C-RAD-0603 New Footprint=0805-2
+Change Component Footprint: Designator=P4 Old Footprint=HDR2X1_A New Footprint=HDR1X2
+Change Component Footprint: Designator=P5 Old Footprint=HDR2X1_A New Footprint=HDR1X2
+Change Component Footprint: Designator=P6 Old Footprint=HDR2X1_A New Footprint=HDR1X2
+Change Component Footprint: Designator=P7 Old Footprint=HDR2X1_A New Footprint=HDR1X2
+Change Component Footprint: Designator=P8 Old Footprint=HDR2X1_A New Footprint=HDR1X2
+Change Component Footprint: Designator=X2 Old Footprint=XTAL-Y¾§Õñ - duplicate New Footprint=32.768kHZ¾§Õñ-MC-306
+Change Component Footprint: Designator=X3 Old Footprint=XTAL-Y¾§Õñ - duplicate New Footprint=32.768kHZ¾§Õñ-MC-306
+Change Component Footprint: Designator=X1 Old Footprint=XTAL-Y¾§Õñ - duplicate New Footprint=XTAL-YÌùÆ¬¾§Õñ
+Added Component: Designator=BLE102(WH-BLE102-V1.1)
+Added Pin To Net: NetName=GND Pin=BLE102-1
+Added Pin To Net: NetName=NRESET Pin=BLE102-4
+Added Pin To Net: NetName=GND Pin=BLE102-11
+Added Pin To Net: NetName=GND Pin=BLE102-12
+Added Pin To Net: NetName=GND Pin=BLE102-17
+Added Pin To Net: NetName=NetBLE102_19 Pin=BLE102-19
+Added Pin To Net: NetName=NetBLE102_20 Pin=BLE102-20
+Added Pin To Net: NetName=NRELOAD Pin=BLE102-21
+Added Pin To Net: NetName=NetBLE102_23 Pin=BLE102-23
+Added Pin To Net: NetName=GND Pin=BLE102-28
+Added Pin To Net: NetName=GND Pin=BLE102-29
+Added Pin To Net: NetName=NetBLE102_38 Pin=BLE102-38
+Added Pin To Net: NetName=GND Pin=BLE102-44
+Added Member To Class: ClassName=Sheet2 Member=Component BLE102 
+Added Room: Name=Sheet2
